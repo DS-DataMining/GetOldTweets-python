@@ -43,8 +43,10 @@ def main(argv):
             elif opt == '--everyn' and arg != '':
                 everyN = int(arg)
 
-        got.manager.TweetManager.getTweets(
-            tweetCriteria, everyN=everyN)
+        if everyN is None:
+            got.manager.TweetManager.getTweets(tweetCriteria)
+        else:
+            got.manager.TweetManager.getTweets(tweetCriteria, everyN=everyN)
 
     except Exception as argv:
         print('Arguments parser error, try -h' + argv)
