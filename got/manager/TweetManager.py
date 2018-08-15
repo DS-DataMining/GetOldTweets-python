@@ -39,8 +39,7 @@ class TweetManager:
                 tweet = models.Tweet()
 
                 usernameTweet = tweetPQ("span.username.js-action-profile-name b").text()
-                #tweetPQWithoutURL = tweetPQ.remove('a')
-                txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
+                
                 retweets = int(tweetPQ("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr(
                     "data-tweet-stat-count").replace(",", ""))
                 favorites = int(tweetPQ("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr(
@@ -60,11 +59,14 @@ class TweetManager:
                         urls.append((link.attrib["data-expanded-url"]))
                     except KeyError:
                         pass
+
+                tweet.urls = ",".join(urls)
+                tweetPQ = tweetPQ.remove('a')
+                txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
+                tweet.text = txt
                 tweet.id = id
                 tweet.permalink = 'https://twitter.com' + permalink
                 tweet.username = usernameTweet
-
-                tweet.text = txt
                 tweet.date = datetime.datetime.fromtimestamp(dateSec)
                 tweet.formatted_date = datetime.datetime.fromtimestamp(dateSec).strftime("%a %b %d %X +0000 %Y")
                 tweet.retweets = retweets
@@ -72,9 +74,9 @@ class TweetManager:
                 tweet.mentions = " ".join(re.compile('(@\\w*)').findall(tweet.text))
                 tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(tweet.text))
                 tweet.geo = geo
-                tweet.urls = ",".join(urls)
                 tweet.author_id = user_id
-
+                
+                
                 results.append(tweet)
                 resultsAux.append(tweet)
 
