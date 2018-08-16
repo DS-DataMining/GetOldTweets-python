@@ -39,6 +39,15 @@ class TweetManager:
                 tweet = models.Tweet()
 
                 usernameTweet = tweetPQ("span.username.js-action-profile-name b").text()
+                if (tweetPQ("div").attr("data-is-reply-to")=="true"):
+                    type_of_tweet = 3
+                else:
+                    type_of_tweet = 0
+                
+              
+                
+                replies = int(tweetPQ("span.ProfileTweet-action--reply span.ProfileTweet-actionCount").attr(
+                    "data-tweet-stat-count").replace(",", ""))
                 
                 retweets = int(tweetPQ("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr(
                     "data-tweet-stat-count").replace(",", ""))
@@ -64,6 +73,8 @@ class TweetManager:
                 tweetPQ = tweetPQ.remove('a')
                 txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
                 tweet.text = txt
+                tweet.type = type_of_tweet
+                tweet.replies = replies
                 tweet.id = id
                 tweet.permalink = 'https://twitter.com' + permalink
                 tweet.username = usernameTweet
