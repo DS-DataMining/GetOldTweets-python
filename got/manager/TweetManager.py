@@ -75,7 +75,6 @@ class TweetManager:
                 txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text())
                 txt = txt.replace('# ', '#')
                 txt = txt.replace('@ ', '@')              
-                print(txt)
                 tweet.type = type_of_tweet
                 tweet.replies = replies
                 tweet.id = id
