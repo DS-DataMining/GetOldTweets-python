@@ -78,6 +78,7 @@ class TweetManager:
                 tweet.type = type_of_tweet
                 tweet.replies = replies
                 tweet.id = id
+                tweet.language = tweetPQ("p.js-tweet-text").attr("lang")
                 tweet.permalink = 'https://twitter.com' + permalink
                 tweet.username = usernameTweet
                 tweet.date = datetime.datetime.fromtimestamp(dateSec)

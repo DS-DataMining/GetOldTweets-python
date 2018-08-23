@@ -13,7 +13,7 @@ class Tweet:
         self.username = url_comp.path.split('/')[1]
 
         dict['username'] = str(self.username)
-        for key in ['id', 'permalink','text', 'type','replies', 'retweets', 'favorites', 'mentions', 'hashtags', 'geo','urls']:
+        for key in ['id', 'permalink','text', 'type','replies', 'retweets', 'favorites', 'mentions', 'hashtags', 'geo','urls','language']:
             dict[key] =  str(self.__dict__[key])
         dict['date'] = self.date.strftime('%d/%m/%Y %H:%M:%S')
 
