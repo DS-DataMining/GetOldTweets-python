@@ -38,6 +38,8 @@ class TweetManager:
                 tweetPQ = PyQuery(tweetHTML)
                 tweet = models.Tweet()
 
+                #print (tweetPQ)
+
                 usernameTweet = tweetPQ("span.username.js-action-profile-name b").text()
                 if (tweetPQ("div").attr("data-is-reply-to")=="true"):
                     type_of_tweet = 3
@@ -70,9 +72,10 @@ class TweetManager:
                         pass
 
                 tweet.urls = ",".join(urls)
-                tweetPQ = tweetPQ.remove('a')
-                txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
-                tweet.text = txt
+                txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text())
+                txt = txt.replace('# ', '#')
+                txt = txt.replace('@ ', '@')              
+                print(txt)
                 tweet.type = type_of_tweet
                 tweet.replies = replies
                 tweet.id = id
@@ -82,10 +85,15 @@ class TweetManager:
                 tweet.formatted_date = datetime.datetime.fromtimestamp(dateSec).strftime("%a %b %d %X +0000 %Y")
                 tweet.retweets = retweets
                 tweet.favorites = favorites
-                tweet.mentions = " ".join(re.compile('(@\\w*)').findall(tweet.text))
-                tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(tweet.text))
+                tweet.mentions = " ".join(re.compile('(@\\w*)').findall(txt))
+                tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(txt))
                 tweet.geo = geo
                 tweet.author_id = user_id
+                tweetPQ = tweetPQ.remove('span')
+                txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text())
+                txt = txt.replace('# ', '#')
+                txt = txt.replace('@ ', '@')
+                tweet.text = txt
                 
                 
                 results.append(tweet)
