@@ -38,7 +38,7 @@ class TweetManager:
                 tweetPQ = PyQuery(tweetHTML)
                 tweet = models.Tweet()
 
-                #print (tweetPQ)
+                #print(tweetPQ)
 
                 usernameTweet = tweetPQ("span.username.js-action-profile-name b").text()
                 if (tweetPQ("div").attr("data-is-reply-to")=="true"):
@@ -82,7 +82,7 @@ class TweetManager:
                 tweet.language = tweetPQ("p.js-tweet-text").attr("lang")
                 tweet.permalink = 'https://twitter.com' + permalink
                 tweet.username = usernameTweet
-                tweet.date = datetime.datetime.fromtimestamp(dateSec)
+                tweet.date = dateSec
                 tweet.formatted_date = datetime.datetime.fromtimestamp(dateSec).strftime("%a %b %d %X +0000 %Y")
                 tweet.retweets = retweets
                 tweet.favorites = favorites
