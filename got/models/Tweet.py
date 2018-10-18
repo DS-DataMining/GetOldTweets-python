@@ -15,7 +15,7 @@ class Tweet:
         dict['username'] = str(self.username)
         for key in ['id', 'permalink', 'original_text','text', 'type','replies', 'retweets', 'favorites', 'mentions', 'hashtags', 'geo','urls','language']:
             dict[key] =  str(self.__dict__[key])
-        dict['date'] = self.date.strftime('%d/%m/%Y %H:%M:%S')
+        dict['date'] = self.date
 
         return json.dumps(dict)
 
