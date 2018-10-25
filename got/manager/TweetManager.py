@@ -19,9 +19,9 @@ class TweetManager:
         cookieJar = http.cookiejar.CookieJar()
 
         active = True
-
         while active:
             json = TweetManager.getJsonReponse(tweetCriteria, refreshCursor, cookieJar, proxy)
+
             if len(json['items_html'].strip()) == 0:
                 break
 
@@ -38,19 +38,15 @@ class TweetManager:
                 tweetPQ = PyQuery(tweetHTML)
                 tweet = models.Tweet()
 
-                #print(tweetPQ)
-
                 usernameTweet = tweetPQ("span.username.js-action-profile-name b").text()
-                if (tweetPQ("div").attr("data-is-reply-to")=="true"):
+                if (tweetPQ("div").attr("data-is-reply-to") == "true"):
                     type_of_tweet = 3
                 else:
                     type_of_tweet = 0
-                
-              
-                
+
                 replies = int(tweetPQ("span.ProfileTweet-action--reply span.ProfileTweet-actionCount").attr(
                     "data-tweet-stat-count").replace(",", ""))
-                
+
                 retweets = int(tweetPQ("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr(
                     "data-tweet-stat-count").replace(",", ""))
                 favorites = int(tweetPQ("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr(
@@ -74,7 +70,7 @@ class TweetManager:
                 tweet.urls = ",".join(urls)
                 txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text())
                 txt = txt.replace('# ', '#')
-                txt = txt.replace('@ ', '@')     
+                txt = txt.replace('@ ', '@')
                 tweet.original_text = txt;
                 tweet.type = type_of_tweet
                 tweet.replies = replies
@@ -95,8 +91,7 @@ class TweetManager:
                 txt = txt.replace('# ', '#')
                 txt = txt.replace('@ ', '@')
                 tweet.text = txt
-                
-                
+
                 results.append(tweet)
                 resultsAux.append(tweet)
 
@@ -139,11 +134,13 @@ class TweetManager:
             urlLang = 'lang=' + tweetCriteria.lang + '&'
         else:
             urlLang = ''
-        url = url % (urllib.parse.quote(urlGetData), urlLang, refreshCursor)
+
+        url = url % (urllib.parse.quote(urlGetData), urlLang, urllib.parse.quote(refreshCursor))
 
         headers = [
             ('Host', "twitter.com"),
-            ('User-Agent', "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"),
+            ('User-Agent',
+             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"),
             ('Accept', "application/json, text/javascript, */*; q=0.01"),
             ('Accept-Language', "de,en-US;q=0.7,en;q=0.3"),
             ('X-Requested-With', "XMLHttpRequest"),
