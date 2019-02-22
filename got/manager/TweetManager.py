@@ -5,6 +5,7 @@ from .. import models
 from pyquery import PyQuery
 
 
+
 class TweetManager:
 
     def __init__(self):
@@ -37,7 +38,22 @@ class TweetManager:
             for tweetHTML in tweets:
                 tweetPQ = PyQuery(tweetHTML)
                 tweet = models.Tweet()
+                
+                alts = []
+                for image in tweetPQ("img"):
+                    try:
+                        alt = image.attrib["alt"]
+                        if (type(alt) is str and alt != ""):
+                            alt = alt.encode("unicode-escape").decode("utf-8","strict")
+                            alt = alt.replace("000", "+").upper()
+                            alt = alt.replace("\\","").upper()
+                            alts.append(alt)
+                    except KeyError:
+                        pass
+                
+            
 
+                
                 usernameTweet = tweetPQ("span.username.js-action-profile-name b").text()
                 if (tweetPQ("div").attr("data-is-reply-to") == "true"):
                     type_of_tweet = 3
@@ -67,6 +83,7 @@ class TweetManager:
                     except KeyError:
                         pass
 
+                
                 tweet.urls = ",".join(urls)
                 txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text())
                 txt = txt.replace('# ', '#')
@@ -91,6 +108,11 @@ class TweetManager:
                 txt = txt.replace('# ', '#')
                 txt = txt.replace('@ ', '@')
                 tweet.text = txt
+                tweet.emojis = []
+                if (len(alts) is not 0):
+                    tweet.emojis = alts 
+           
+
 
                 results.append(tweet)
                 resultsAux.append(tweet)
@@ -142,7 +164,7 @@ class TweetManager:
             ('User-Agent',
              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"),
             ('Accept', "application/json, text/javascript, */*; q=0.01"),
-            ('Accept-Language', "de,en-US;q=0.7,en;q=0.3"),
+            ('Accept-Language', "en-US;q=0.7,en;q=0.3"),
             ('X-Requested-With', "XMLHttpRequest"),
             ('Referer', url),
             ('Connection', "keep-alive")
