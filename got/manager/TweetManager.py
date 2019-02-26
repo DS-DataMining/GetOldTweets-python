@@ -44,13 +44,25 @@ class TweetManager:
                 alts = []
                 text_and_emoji = ""
                 for child in tweetPQ("p.js-tweet-text").contents():
+                   
                     if(type(child) is lxml.html.HtmlElement):
-                        alt = child.attrib["alt"]
-                        alt = alt.encode("unicode-escape").decode("utf-8","strict")
-                        alt = alt.replace("000", "+").upper()
-                        text_and_emoji  = text_and_emoji + alt + " "
-                        alt = alt.replace("\\","").upper()
-                        alts.append(alt)
+                        if (child.tag == "img"):
+                            
+                            try:
+                                alt = child.attrib["alt"]
+                                alt = alt.encode("unicode-escape").decode("utf-8","strict")
+                                alt = alt.replace("000", "+").upper()
+                                text_and_emoji  = text_and_emoji + alt + " "
+                                alt = alt.replace("\\","").upper()
+                                alts.append(alt)
+                            except KeyError:
+                                pass
+                        else:
+                            descendants = child.getchildren()
+                            for descendant in descendants:
+                                if(descendant.text is not None):
+                                    text_and_emoji  = text_and_emoji + descendant.text
+                            
                     else:
                         text_and_emoji = text_and_emoji + child
 
