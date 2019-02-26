@@ -3,6 +3,7 @@ import urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error,
 import sys
 from .. import models
 from pyquery import PyQuery
+import lxml
 
 
 
@@ -39,20 +40,21 @@ class TweetManager:
                 tweetPQ = PyQuery(tweetHTML)
                 tweet = models.Tweet()
                 
+                tweet.original_text_and_emojis = ""
                 alts = []
-                for image in tweetPQ("img"):
-                    try:
-                        alt = image.attrib["alt"]
-                        if (type(alt) is str and alt != ""):
-                            alt = alt.encode("unicode-escape").decode("utf-8","strict")
-                            alt = alt.replace("000", "+").upper()
-                            alt = alt.replace("\\","").upper()
-                            alts.append(alt)
-                    except KeyError:
-                        pass
-                
-            
+                text_and_emoji = ""
+                for child in tweetPQ("p.js-tweet-text").contents():
+                    if(type(child) is lxml.html.HtmlElement):
+                        alt = child.attrib["alt"]
+                        alt = alt.encode("unicode-escape").decode("utf-8","strict")
+                        alt = alt.replace("000", "+").upper()
+                        text_and_emoji  = text_and_emoji + alt + " "
+                        alt = alt.replace("\\","").upper()
+                        alts.append(alt)
+                    else:
+                        text_and_emoji = text_and_emoji + child
 
+                tweet.original_text_and_emojis = text_and_emoji
                 
                 usernameTweet = tweetPQ("span.username.js-action-profile-name b").text()
                 if (tweetPQ("div").attr("data-is-reply-to") == "true"):
@@ -111,7 +113,6 @@ class TweetManager:
                 tweet.emojis = []
                 if (len(alts) is not 0):
                     tweet.emojis = alts 
-           
 
 
                 results.append(tweet)
