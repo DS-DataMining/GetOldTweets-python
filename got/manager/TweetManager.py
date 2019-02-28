@@ -49,13 +49,14 @@ class TweetManager:
                         if (child.tag == "img"):
                             
                             try:
+                               
                                 alt = child.attrib["alt"]
                                 alt = alt.encode("unicode-escape").decode("utf-8","strict")
                                 alt = alt.replace("000", "").upper()
-                                alt = alt.replace("U", "U+")
+                                alt = alt.replace("\\U", "/U+")
                                 text_and_emoji  = text_and_emoji + alt + " "
-                                alt = alt.replace("\\"," ").upper()
                                 alts.append(alt)
+                                
                             except KeyError:
                                 pass
                         else:
