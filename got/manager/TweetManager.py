@@ -43,6 +43,8 @@ class TweetManager:
                 tweet.original_text_and_emojis = ""
                 alts = []
                 text_and_emoji = ""
+                tweet.full_html = tweetPQ("p.js-tweet-text")
+                
                 for child in tweetPQ("p.js-tweet-text").contents():
                    
                     if(type(child) is lxml.html.HtmlElement):
@@ -54,7 +56,8 @@ class TweetManager:
                                 alt = alt.encode("unicode-escape").decode("utf-8","strict")
                                 alt = alt.replace("000", "").upper()
                                 alt = alt.replace("\\U", "/U+")
-                                text_and_emoji  = text_and_emoji + alt + " "
+                                alt = alt + " "
+                                text_and_emoji  = text_and_emoji + alt 
                                 alts.append(alt)
                                 
                             except KeyError:
